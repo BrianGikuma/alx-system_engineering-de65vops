@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# Configures an Nginx server so that /redirect_me redirects to another page.
-# The redirection is configured as a "301 Moved Permanently"
+# Script that it configures a brand new Ubuntu machine to the requirements asked
 
-sudo apt-get update
-sudo apt-get install -y nginx
-sed -i '11i\add_header X-Served-By $HOSTNAME;' /etc/nginx/nginx.conf
-sudo service nginx restart
+apt-get update
+apt-get -y install nginx
+sed -i "/server_name _;/a add_header X-Served-By '$HOSTNAME';" /etc/nginx/sites-available/default
+service nginx restart

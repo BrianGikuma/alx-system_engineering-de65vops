@@ -1,69 +1,24 @@
-# Nginx web server setup and configuration
+# Just as in task #0, we’d like you to automate the task of creating a custom HTTP header response, but with Puppet.
 
-exec { 'update-apt':
-
-  command => '/usr/bin/apt-get update',
-
+exec { 'apt-get update':
+  command  => 'apt-get update',
+  provider => shell,
 }
-
-
 
 package { 'nginx':
-
   ensure  => installed,
-
-  require => Exec['update-apt'],
-
+  require => Exec['apt-get update'],
 }
 
-
-
-file_line { 'Redirection':
-
+file_line { 'Header response':
   ensure  => 'present',
-
   path    => '/etc/nginx/sites-available/default',
-
-  after   => 'listen 80 default_server;',
-
-  line    => 'rewrite ^/redirect_me https://sketchfab.com/bluepeno/models permanent;',
-
-  require => Package['nginx'],
-
-}
-
-
-
-file_line { 'Custom-Header':
-
-  ensure  => 'present',
-
-  path    => '/etc/nginx/sites-available/default',
-
-  after   => 'listen 80 default_server;',
-
+  after   => 'server_name _;',
   line    => 'add_header X-Served-By $hostname;',
-
   require => Package['nginx'],
-
 }
-
-
-
-file { '/var/www/html/index.html':
-
-  content => 'Hello World!',
-
-  require => Package['nginx'],
-
-}
-
-
 
 service { 'nginx':
-
   ensure  => running,
-
   require => Package['nginx'],
-
 }
